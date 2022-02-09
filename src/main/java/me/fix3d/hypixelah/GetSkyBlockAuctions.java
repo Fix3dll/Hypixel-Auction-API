@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import static java.lang.Math.pow;
 import java.text.DecimalFormat;
 import javax.swing.text.BadLocationException;
+import kong.unirest.Unirest;
 import me.nullicorn.nedit.NBTReader;
 import me.nullicorn.nedit.type.NBTCompound;
 
@@ -50,6 +51,19 @@ public class GetSkyBlockAuctions {
             gui.print("\"" + gui.text + "\" bulunamadı! Arama tamamalandı.\n", 255, 85, 85);
             Utils.await();
         }
+        
+        /**
+         * Doesn't need API key.
+         */
+        Unirest.get("https://sessionserver.mojang.com/session/minecraft/profile/" + data.uuid)
+                .asJsonAsync().whenComplete((profile, throwable) -> {
+                    String auctioneer = profile.getBody().getObject().getString("name");
+                    try {
+                        gui.print("Auctioneer: &(255,255,255)" + auctioneer, 255, 170, 0);
+                    } catch (BadLocationException | IndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                    }
+                });
 
         int count = result.getInt("Count", 0);
         int recomb = result.getCompound("tag").getInt("ExtraAttributes.rarity_upgrades", 0);
@@ -60,14 +74,6 @@ public class GetSkyBlockAuctions {
 
         String coloredName = Replace.modifiedColor(name);
         gui.print(coloredName, 255, 85, 255);
-
-        Utils.API.getPlayerByUuid(data.uuid).whenComplete((profile, throwable) -> {
-            try {
-                gui.print("Auctioneer: &(255,255,255)" + profile.getPlayer().getName(), 255, 170, 0);
-            } catch (BadLocationException | IndexOutOfBoundsException e) {
-                e.printStackTrace();
-            }
-        });
 
         DecimalFormat formatter = new DecimalFormat("#,###");
 

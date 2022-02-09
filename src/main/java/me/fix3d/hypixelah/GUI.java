@@ -182,19 +182,8 @@ public class GUI extends javax.swing.JFrame {
             if (ConfigManager.read("backgroundRGB").equals("")) {
                 g.setColor(new Color(255,170,0));
             } else {
-                String[] bgRGB = ConfigManager.read("backgroundRGB").split(",",4);
-                int x = parseInt(bgRGB[0].trim());
-                int y = parseInt(bgRGB[1].trim());
-                int z = parseInt(bgRGB[2].trim());
-                if (0 <= x && 255 >= x && 0 <= y && 255 >= y && 0 <= z && 255 >= z) {
-                    g.setColor(new Color(x,y,z));
-                } else {
-                    JOptionPane.showMessageDialog(null,
-                            "\"backgroundRGB\" yanlış!",
-                            "Hata",
-                            JOptionPane.ERROR_MESSAGE);
-                    System.exit(0);
-                }
+                int[] bgRGB = ConfigManager.readBgRGB();
+                g.setColor(new Color(bgRGB[0],bgRGB[1],bgRGB[2]));
             }
             
             g.fillRect(0, 0, getWidth(), getHeight());
@@ -203,7 +192,7 @@ public class GUI extends javax.swing.JFrame {
             if (ConfigManager.read("backgroundPath").equals("")) {
                 img = new ImageIcon(getClass().getResource("/images/bg.png")).getImage();
             } else {
-                img = new ImageIcon(ConfigManager.read("backgroundPath")).getImage();
+                img = new ImageIcon(ConfigManager.readBgPath()).getImage();
             }
             g.drawImage(img, 0, 0, this);
 

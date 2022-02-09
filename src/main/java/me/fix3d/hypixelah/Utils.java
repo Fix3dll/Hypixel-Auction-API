@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.hypixel.api.exceptions.BadStatusCodeException;
 import net.hypixel.api.reply.skyblock.SkyBlockAuctionsReply;
 
 public class Utils {
@@ -23,13 +24,16 @@ public class Utils {
     public static void await() {
         while (!Thread.interrupted()) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    /**
+     * TODO: Get tP without httpRequest or with efficient way. 
+     */
     public static int totalPages() {
         int totalPages = 0;
         try {
@@ -43,9 +47,9 @@ public class Utils {
 
     public static JsonArray allAuctions() {
         JsonArray allAuctions = new JsonArray(); // All auctions will be stored here
-        int totalPages = totalPages();
+        //int totalPages = totalPages(); TODO
         List<CompletableFuture<SkyBlockAuctionsReply>> futureList = new ArrayList<>(); // List of all the completable futures
-        for (int i = 0; i < totalPages; i++) { // Loop through all auctions
+        for (int i = 0; i < 80; i++) { // Loop through all auctions
             futureList.add(
                 API.getSkyBlockAuctions(i).whenComplete((page, throwable) -> {
                         allAuctions.add(page.getAuctions());
@@ -55,8 +59,13 @@ public class Utils {
 
         try {
             CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        } catch (InterruptedException | ExecutionException | BadStatusCodeException ex) {
+            if (ex.toString().contains("404")) {
+                //TODO
+                System.out.println("Inefficient way to save time ^v^");
+            } else {
+                ex.printStackTrace();
+            }
         }
 
         return allAuctions;
@@ -72,7 +81,7 @@ public class Utils {
         System.out.println("Filter: " + filter);
 
         JsonArray allAuctions = Utils.allAuctions();
-        Integer totalPages = allAuctions.size();
+        int totalPages = allAuctions.size();
 
         int lowbin = 0;
         int totalItem = 0;
