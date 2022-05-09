@@ -1,8 +1,7 @@
-package me.fix3d.hypixelah;
+package me.fix3dll.hypixelah;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
+
 import static java.lang.Integer.parseInt;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 public class GUI extends javax.swing.JFrame {
-    
+
     public StyledDocument document;
     public static String text;
     public static String filter = "NO FILTER";
@@ -26,7 +25,7 @@ public class GUI extends javax.swing.JFrame {
     /**
      * Creates new form newGUI
      */
-    public GUI() throws BadLocationException {    
+    public GUI() throws BadLocationException {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Windows".equals(info.getName())) {
@@ -65,13 +64,9 @@ public class GUI extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(670, 381));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        input.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        input.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12)); // NOI18N
         input.setOpaque(false);
-        input.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inputActionPerformed(evt);
-            }
-        });
+        input.addActionListener(this::inputActionPerformed);
         getContentPane().add(input, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 319, 564, 23));
 
         scrollPane.setOpaque(false);
@@ -79,7 +74,7 @@ public class GUI extends javax.swing.JFrame {
         scrollPane.setBorder(null);
 
         console.setEditable(false);
-        console.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        console.setFont(new java.awt.Font("Monospaced", Font.PLAIN, 12)); // NOI18N
         console.setOpaque(false);
         document = console.getStyledDocument();
         scrollPane.setViewportView(console);
@@ -87,11 +82,7 @@ public class GUI extends javax.swing.JFrame {
         getContentPane().add(scrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 654, 319));
 
         filterBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "No filter", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Divine", "Special", "Very Special" }));
-        filterBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                filterBoxActionPerformed(evt);
-            }
-        });
+        filterBox.addActionListener(this::filterBoxActionPerformed);
         getContentPane().add(filterBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(564, 319, 90, 23));
 
         pack();
@@ -113,11 +104,11 @@ public class GUI extends javax.swing.JFrame {
 
     public void print (String str, int x, int y, int z) throws BadLocationException {
         Style style = console.addStyle("Style", null);
-        
+
         Matcher matchAmpersand = Pattern.compile("&").matcher(str);
         Matcher matchRGB = Pattern.compile("(?<=&\\().*?(?=\\))").matcher(str);
         Matcher matchStr = Pattern.compile("(?<=\\)).*?(.*?)&").matcher(str);
-        
+
         int foundAmper = 0, foundRGB = 0, foundStr = 0;
         while (matchAmpersand.find()) {
             foundAmper++;
@@ -126,13 +117,13 @@ public class GUI extends javax.swing.JFrame {
             document.insertString(document.getLength(), str, style);
             return;
         }
-        
+
         ArrayList rgbArray = new ArrayList();
         while (matchRGB.find()) {
             rgbArray.add(matchRGB.group());
             foundRGB++;
         }
-        
+
         ArrayList strArray = new ArrayList();
         while (matchStr.find()) {
             strArray.add(matchStr.group().replace("&",""));
@@ -142,7 +133,7 @@ public class GUI extends javax.swing.JFrame {
         if(lastAmper.find()) {
             strArray.add(lastAmper.group(1));
         }
-        
+
         boolean firstPrinted = false;
         for (int i = 0; i < foundAmper; i++) {
             String beforeAmper = null;
@@ -162,7 +153,7 @@ public class GUI extends javax.swing.JFrame {
             document.insertString(document.getLength(), beforeAmper, style);
         } document.insertString(document.getLength(), "\n",style);
     }
-    
+
     private List icons() {
         List<Image> icons  = new ArrayList();
         icons.add(new ImageIcon(getClass().getResource("/images/16x16.png")).getImage());
@@ -171,7 +162,7 @@ public class GUI extends javax.swing.JFrame {
         icons.add(new ImageIcon(getClass().getResource("/images/128x128.png")).getImage());
         return icons;
     }
-    
+
     class CustomConsole extends JTextPane {
         public CustomConsole() {
             super();
@@ -185,7 +176,7 @@ public class GUI extends javax.swing.JFrame {
                 int[] bgRGB = ConfigManager.readBgRGB();
                 g.setColor(new Color(bgRGB[0],bgRGB[1],bgRGB[2]));
             }
-            
+
             g.fillRect(0, 0, getWidth(), getHeight());
 
             Image img;

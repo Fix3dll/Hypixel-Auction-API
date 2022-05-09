@@ -1,2 +1,38 @@
-/target/
-/HypixelAH.properties
+# gradle
+
+.gradle/
+build/
+out/
+classes/
+logs/
+
+# eclipse
+
+*.launch
+
+# idea
+
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# vscode
+
+.settings/
+.vscode/
+bin/
+.classpath
+.project
+
+# macos
+
+*.DS_Store
+
+# fabric
+
+run/
+
+# HypixelAH
+
+HypixelAH.properties
